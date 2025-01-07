@@ -15,14 +15,9 @@
             justify-content: center;
             align-items: center;
             background-color: #f8f9fa;
+            position: relative;
         }
-        .settings-container {
-            width: 400px;
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
+        
         .form-group {
             margin-bottom: 15px;
         }
@@ -77,9 +72,9 @@
 
 
 	<!--- Settings --->
-	<div id="settings" class="settings-container">
+	<div id="settings" class="section container-fluid bg-light pt-5 min-vh-100">
         <h3 class="text-center">Settings</h3>
-        <form id="settingsForm">
+        <form id="settingsForm" class="container text-center mt-5" >
             <div class="form-group">
                 <label>Participants</label>
                 <div id="participantsContainer">
@@ -90,7 +85,8 @@
                 </div>
                 <button type="button" class="btn btn-secondary btn-sm mt-2" id="addParticipantItem">Add Participant</button>
             </div>
-            <button type="button" class="btn btn-primary w-100" id="saveSettings">Save</button>
+            <button type="button" class="btn btn-primary" id="saveSettings">Save</button>
+            <button type="button" class="btn btn-secondary" id="resetSettings">Reset</button>
         </form>
     </div>
 	
@@ -157,7 +153,8 @@
                 participants: participantValues
             };
             document.cookie = `settings=${JSON.stringify(settings)};path=/;max-age=31536000`;
-            alert('Settings saved!');
+            
+            window.location.reload();
         }
 
         function loadSettings() {
@@ -190,6 +187,7 @@
 
         document.getElementById('addParticipantItem').addEventListener('click', () => addParticipantItem());
         document.getElementById('saveSettings').addEventListener('click', saveSettings);
+        document.getElementById('resetSettings').addEventListener('click', loadSettings);
     </script>
 
 	<!----------------------------------
@@ -244,7 +242,7 @@
 								
 				container.getElementsByClassName('card-text')[0].innerHTML = data.data.name;
 				container.getElementsByClassName('card-footer')[0].innerHTML = data.date.mediumString;
-				container.getElementsByClassName('card-img-top')[0].src = data.data.imgUrl;
+				container.getElementsByClassName('card-img-top')[1].src = data.data.imgUrl;
 				
             } catch (error) {
                 console.error('There has been a problem with your fetch operation:', error);
