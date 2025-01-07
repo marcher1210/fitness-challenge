@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Fitness challenge</title>
+	<link rel="icon" type="image/x-icon" href="/assets/icon.png">
+	<link rel="apple-touch-icon" sizes="128x128" href="/assets/icon.png">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            justify-content: center;
+            align-items: center;
+            background-color: #f8f9fa;
+        }
+        .settings-container {
+            width: 400px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .array-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        .array-item input {
+            flex: 1;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body data-bs-spy="scroll" data-bs-target=".navbar" data-bs-offset="0">
+
+
+    <!--- Navbar --->
+    <nav class="navbar navbar-expand bg-light navbar-light fixed-top">
+      <div class="container-fluid">
+	<h4 class="text-danger text-center text-uppercase mt-2" style="position:absolute;transform: rotate(-45deg); width: 100px;z-index:1000;">Beta</h4>
+        <a class="navbar-brand" href="#dresscode">
+            <img src="/assets/unknown.webp" alt="Avatar Logo" style="width:40px;" class="rounded-pill"> 
+        </a>
+          <ul class="navbar-nav mx-auto">
+            <li class="nav-item">
+				<a class="nav-link" href="#challenge">
+					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">
+					  <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5z"/>
+					</svg>
+					<span class="d-none d-sm-inline">Challenge</span>
+				</a>
+            </li>
+            <li class="nav-item">
+				<a class="nav-link" href="#settings">
+					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-sliders2" viewBox="0 0 16 16">
+					  <path fill-rule="evenodd" d="M10.5 1a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V4H1.5a.5.5 0 0 1 0-1H10V1.5a.5.5 0 0 1 .5-.5M12 3.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5m-6.5 2A.5.5 0 0 1 6 6v1.5h8.5a.5.5 0 0 1 0 1H6V10a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5M1 8a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2A.5.5 0 0 1 1 8m9.5 2a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V13H1.5a.5.5 0 0 1 0-1H10v-1.5a.5.5 0 0 1 .5-.5m1.5 2.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5"/>
+					</svg>
+					<span class="d-none d-sm-inline">Settings</span>
+				</a>
+            </li>
+          </ul>
+      </div>
+    </nav>
+
+    <!--- Challenge --->
+    <div id="challenge" class="section container-fluid bg-light pt-5 min-vh-100">
+        <div class="container text-center mt-5" id="main-container">
+            
+        </div>
+    </div>
+
+
+	<!--- Settings --->
+	<div id="settings" class="settings-container">
+        <h3 class="text-center">Settings</h3>
+        <form id="settingsForm">
+            <div class="form-group">
+                <label>Participants</label>
+                <div id="participantsContainer">
+                    <div class="array-item">
+                        <input type="text" class="form-control participant-input" placeholder="Enter participant name">
+                        <button type="button" class="btn btn-danger btn-sm remove-participant-item">-</button>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-secondary btn-sm mt-2" id="addParticipantItem">Add Participant</button>
+            </div>
+            <button type="button" class="btn btn-primary w-100" id="saveSettings">Save</button>
+        </form>
+    </div>
+	
+	
+	<!-- Link to Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/handlebars/dist/handlebars.min.js"></script>
+
+    
+	
+	<!----------------------------------
+	|||      participant-container
+	------------------------------------>
+    <script id="template-participant-container" type="text/x-handlebars-template">
+		<div class="row g-0" id="participant-{{number}}">
+			<div class="col m-2">
+				{{name}}
+			</div>
+			<div class="col m-2">
+				{{> daycard class='today' dayname='Today' date='...'}}
+			</div>
+			<div class="col m-2">
+				{{> daycard class='tomorrow' dayname='Tomorrow' date='...'}}
+			</div>
+		</div>
+    </script> 
+	
+
+	<!-----------------------------------
+	|||         card-placeholder      |||
+	------------------------------------>
+    <script id="template-daycard" type="text/x-handlebars-template">
+		<div class="card placeholder {{class}}-card">
+			<div class="card-img-top p-2">
+            	<img alt="unknown" src="/assets/unknown.webp" class="card-img-top"/>
+        	</div>
+          <div class="card-body">
+            <p class="card-text"></p>
+          </div>
+          <div class="card-footer">
+            {{date}}
+          </div>
+        </div>
+    </script>
+	
+
+
+	<!----------------------------------
+	|||      Settings functionality   |||
+	------------------------------------>
+	<script>
+        const defaultSettings = {
+            participants: ['Marcher', 'Mathias', 'Nord']
+        };
+        var globalSettings = {};
+		
+		function saveSettings() {
+            const participantInputs = document.querySelectorAll('.participant-input');
+            const participantValues = Array.from(participantInputs).map(input => input.value);
+            const settings = {
+                //username: document.getElementById('username').value,
+                //volume: document.getElementById('volume').value,
+                //theme: document.getElementById('theme').value,
+                participants: participantValues
+            };
+            document.cookie = `settings=${JSON.stringify(settings)};path=/;max-age=31536000`;
+            alert('Settings saved!');
+        }
+
+        function loadSettings() {
+            const cookie = document.cookie.split('; ').find(row => row.startsWith('settings='));
+            const settings = cookie ? JSON.parse(cookie.split('=')[1]) : defaultSettings;
+
+            //document.getElementById('username').value = settings.username;
+            //document.getElementById('volume').value = settings.volume;
+            //document.getElementById('theme').value = settings.theme;
+
+            const participantsContainer = document.getElementById('participantsContainer');
+            participantsContainer.innerHTML = '';
+            settings.participants.forEach(value => {
+                addParticipantItem(value);
+            });
+            globalSettings = settings;
+        }
+
+        function addParticipantItem(value = '') {
+            const participantsContainer = document.getElementById('participantsContainer');
+            const div = document.createElement('div');
+            div.className = 'array-item';
+            div.innerHTML = `
+                <input type="text" class="form-control participant-input" value="${value}" placeholder="Enter participant name">
+                <button type="button" class="btn btn-danger btn-sm remove-participant-item">-</button>
+            `;
+            div.querySelector('.remove-participant-item').addEventListener('click', () => div.remove());
+            participantsContainer.appendChild(div);
+        }
+
+        document.getElementById('addParticipantItem').addEventListener('click', () => addParticipantItem());
+        document.getElementById('saveSettings').addEventListener('click', saveSettings);
+    </script>
+
+	<!----------------------------------
+	|||      Render functionality    |||
+	------------------------------------>
+    <script>
+		function renderTemplates(){
+			Handlebars.registerPartial("daycard", document.getElementById('template-daycard').innerHTML);
+
+            // Compile the Handlebars template
+            const templateSource = document.getElementById('template-participant-container').innerHTML;
+            const template = Handlebars.compile(templateSource);
+            
+            
+            // Pass the data to the template
+			var compiledHtml = '';
+            for (var i = 0; i < globalSettings.participants.length; i++) {
+            	compiledHtml += template({number:i+1, name:globalSettings.participants[i]});
+            }
+            
+            // Insert the compiled HTML into the page
+            document.getElementById('main-container').innerHTML = compiledHtml;
+		}
+
+    </script>
+
+
+	<!----------------------------------
+	|||        Fetch functionality    |||
+	------------------------------------>
+    <script>
+		async function fetchData(){
+			const today = new Date();
+			const tomorrow =  new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+
+            for (var i = 0; i < globalSettings.participants.length; i++) {
+            	fetchCard(i+1, globalSettings.participants[i], 'today', today);
+            	fetchCard(i+1, globalSettings.participants[i], 'tomorrow', tomorrow);
+            }
+		}
+
+		async function fetchCard(id, participant, dayname, date){
+			try {
+                const response = await fetch('/.netlify/functions/api/random-challenge?userseed='+participant+'&date='+date.toISOString().split('T')[0]);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+
+                const container = document.getElementById('participant-'+id).getElementsByClassName(dayname+'-card')[0];
+								
+				container.getElementsByClassName('card-text')[0].innerHTML = data.data.name;
+				container.getElementsByClassName('card-footer')[0].innerHTML = data.date.mediumString;
+				container.getElementsByClassName('card-img-top')[0].src = data.data.imgUrl;
+				
+            } catch (error) {
+                console.error('There has been a problem with your fetch operation:', error);
+            }
+		}
+	</script>
+
+
+    <script>
+		function loadMain(){ 
+			loadSettings();
+			renderTemplates();
+			fetchData();
+		}
+        // Display content when the page loads
+        document.addEventListener('DOMContentLoaded', loadMain);
+    </script>
+</body>
+</html>
