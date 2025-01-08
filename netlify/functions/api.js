@@ -1,5 +1,6 @@
 const config = {
     seed: 'goodseed',
+  	numberOfPreviousDays: 3*7,
 };
 
 function isToday(date){
@@ -70,6 +71,28 @@ exports.handler = async (event) => {
     		break;
     	case 'random-challenge':
 	        data['data'] = await picker.getRandomElement();
+	        break;
+	    case 'history':
+	    	let datesToProcess = [];
+			const numberOfPreviousDays = event.queryStringParameters["days"] ?? config.numberOfPreviousDays;
+			const start = -(7*Math.ceil(numberOfPreviousDays/7.))-realWeekdayNum(date);
+			const end = (7*Math.floor((realWeekdayNum(date)+1)/7.))+(7-realWeekdayNum(date));
+            for (let i = start; i < end; i++) {
+                const nextDate = new Date(date);
+                nextDate.setDate(date.getDate() + i);
+                datesToProcess.push(nextDate);
+            }
+
+            var selections = datesToProcess.map(mapdate => {
+            	picker.setUserseed(params.userseed + mapdate.toISOString());
+		        const selectedValue = picker.getRandomElement();
+		        return {
+		            date: buildDateObject(mapdate),
+		            data: selectedValue
+		        };
+		    });
+		    data['data'] = selections;
+            break;
     }
 
     return {
