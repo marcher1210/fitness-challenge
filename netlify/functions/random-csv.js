@@ -37,6 +37,11 @@ class RandomCsvPicker extends RandomPicker {
         const randomIndex = Math.floor(this.getRandom() * this.records.length);
         return this.records[randomIndex];
     }
+
+    // Return full list
+    getFullList(){
+        return this.records;
+    }
 }
 
 module.exports = RandomCsvPicker;

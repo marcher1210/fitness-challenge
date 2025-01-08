@@ -52,7 +52,6 @@ exports.handler = async (event) => {
     };
 
     const date = (params.date) ? new Date(params.date) : new Date();
-
 	date.setUTCHours(0,0,0,0);
 
     let data = {
@@ -60,13 +59,19 @@ exports.handler = async (event) => {
         userseed: params.userseed,
         date: buildDateObject(date)
     };
-    if(path!='date'){
-        const RandomsPicker  = require('./'+path);
-        const picker = new RandomsPicker(config.seed);
-        picker.setUserseed(params.userseed + date.toISOString());
-        const randomOne = await picker.getRandomElement(); 
-        data['data'] = randomOne;
+
+	const RandomsPicker  = require('./random-challenge');
+    const picker = new RandomsPicker(config.seed);
+    picker.setUserseed(params.userseed + date.toISOString());
+
+    switch (path) {
+    	case 'challengelist':
+    		data['data'] = picker.getFullList();
+    		break;
+    	case 'random-challenge':
+	        data['data'] = await picker.getRandomElement();
     }
+
     return {
         statusCode: 200,
         body: JSON.stringify(data)
