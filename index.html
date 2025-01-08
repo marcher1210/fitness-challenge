@@ -16,6 +16,12 @@
             align-items: center;
             position: relative;
         }
+        #main-container {
+            max-width: 800px;
+        }
+		.section {
+			padding-top: 66px;
+		}
 
         
         .form-group {
@@ -39,7 +45,7 @@
     <nav class="navbar navbar-expand bg-light navbar-light fixed-top">
       <div class="container-fluid">
 	<h4 class="text-danger text-center text-uppercase mt-2" style="position:absolute;transform: rotate(-45deg); width: 100px;z-index:1000;">Beta</h4>
-        <a class="navbar-brand" href="#dresscode">
+        <a class="navbar-brand" href="#challenge">
             <img src="/assets/logo.webp" alt="Avatar Logo" style="width:40px;" class="rounded-pill"> 
         </a>
           <ul class="navbar-nav mx-auto">
@@ -65,7 +71,7 @@
 
     <!--- Challenge --->
     <div id="challenge" class="section container-fluid bg-light bg-gradient pt-5 min-vh-100">
-        <div class="container text-center mt-5" id="main-container">
+        <div class="container px-4 py-5 mt-5" id="main-container">
             
         </div>
     </div>
@@ -101,10 +107,8 @@
 	|||      participant-container
 	------------------------------------>
     <script id="template-participant-container" type="text/x-handlebars-template">
+		<h2 class="pb-2 border-bottom mt-5">{{name}}</h2>
 		<div class="row g-0" id="participant-{{number}}">
-			<div class="col m-2">
-				{{name}}
-			</div>
 			<div class="col m-2">
 				{{> daycard class='today' dayname='Today' date='...'}}
 			</div>
@@ -119,17 +123,15 @@
 	|||         card-placeholder      |||
 	------------------------------------>
     <script id="template-daycard" type="text/x-handlebars-template">
-		<div class="card placeholder {{class}}-card">
-			<div class="card-img-top p-2">
-            	<img alt="unknown" src="/assets/unknown.webp" class="card-img-top"/>
-        	</div>
-          <div class="card-body">
-            <p class="card-text"></p>
-          </div>
-          <div class="card-footer">
-            {{date}}
-          </div>
-        </div>
+		<div class="card {{class}}-card text-center">
+			<img alt="unknown" src="/assets/unknown.webp" class="card-img-top"/>
+			<div class="card-body">
+				<p class="card-text"></p>
+			</div>
+			<div class="card-footer display-6">
+				{{dayname}}
+			</div>
+		</div>
     </script>
 	
 
@@ -241,8 +243,8 @@
                 const container = document.getElementById('participant-'+id).getElementsByClassName(dayname+'-card')[0];
 								
 				container.getElementsByClassName('card-text')[0].innerHTML = data.data.name;
-				container.getElementsByClassName('card-footer')[0].innerHTML = data.date.mediumString;
-				container.getElementsByClassName('card-img-top')[1].src = data.data.imgUrl;
+				//container.getElementsByClassName('card-footer')[0].innerHTML = data.date.mediumString;
+				container.getElementsByClassName('card-img-top')[0].src = data.data.imgUrl;
 				
             } catch (error) {
                 console.error('There has been a problem with your fetch operation:', error);
