@@ -23,7 +23,46 @@
 			padding-top: 66px;
 		}
 
-        
+		.calendar-day {
+			min-height: 100px;
+			border: 1px solid #ddd;
+			position: relative;
+			padding: 20px 5px;
+			opacity: 0.8
+		}
+		
+		.calendar-row div:nth-last-of-type(1), 
+		.calendar-row div:nth-last-of-type(2) {
+			background-color: #EEE;
+		}
+		
+		.calendar-day img {
+			max-width: 80%;
+			max-height: 60px;
+			display: block;
+			margin: 0 auto;
+		}
+		
+		.calendar-day.calendar-day-today img {
+			border: 1px solid #000;
+		}
+		
+		.calendar-day.calendar-day-future {
+			opacity: 0.3;
+		}
+		
+		.calendar-day.calendar-day-today {
+			opacity: 1;
+			font-weight: bold;
+		}
+		
+		.calendar-day .date {
+			position: absolute;
+			top: 5px;
+			right: 5px;
+			font-size: 0.85em;
+		}
+
         .form-group {
             margin-bottom: 15px;
         }
@@ -58,6 +97,15 @@
 				</a>
             </li>
             <li class="nav-item">
+				<a class="nav-link" href="#history">
+					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar3" viewBox="0 0 16 16">
+						<path d="M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857z"/>
+					  <path d="M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2"/>
+					</svg>
+					<span class="d-none d-sm-inline">History</span>
+				</a>
+            </li>
+            <li class="nav-item">
 				<a class="nav-link" href="#settings">
 					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-sliders2" viewBox="0 0 16 16">
 					  <path fill-rule="evenodd" d="M10.5 1a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V4H1.5a.5.5 0 0 1 0-1H10V1.5a.5.5 0 0 1 .5-.5M12 3.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5m-6.5 2A.5.5 0 0 1 6 6v1.5h8.5a.5.5 0 0 1 0 1H6V10a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5M1 8a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2A.5.5 0 0 1 1 8m9.5 2a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V13H1.5a.5.5 0 0 1 0-1H10v-1.5a.5.5 0 0 1 .5-.5m1.5 2.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5"/>
@@ -76,6 +124,14 @@
         </div>
     </div>
 
+    <!--- History --->
+    <div id="history" class="section container-fluid bg-dark text-white py-5 min-vh-100">
+        <h1>History</h1>
+		<div  id="history" class="container bg-light text-dark border rounded-2 p-4">
+			<div class="container-fluid" id="history-choosers"></div>
+			<div class="container-fluid" id="history-calendar"></div>
+		</div>
+    </div>
 
 	<!--- Settings --->
 	<div id="settings" class="section container-fluid bg-dark bg-gradient text-white pt-5 min-vh-100">
@@ -134,6 +190,69 @@
 		</div>
     </script>
 	
+
+
+	<!-----------------------------------
+	|||      calendar-main           |||
+	------------------------------------>
+    <script id="template-calendar-main" type="text/x-handlebars-template">
+		 <div class="row row-cols-7 text-center">
+			<!-- Calendar header -->
+			<div class="col h4">Mon</div>
+			<div class="col h4">Tue</div>
+			<div class="col h4">Wed</div>
+			<div class="col h4">Thu</div>
+			<div class="col h4">Fri</div>
+			<div class="col h4">Sat</div>
+			<div class="col h4">Sun</div>
+		</div>
+		<div class="row row-cols-7 calendar-row">
+			{{#each before}}
+				<div class="col calendar-day"></div>
+			{{/each}}
+			{{#each days}}
+				{{#unless date.weekdayNum}}
+					</div><div class="row row-cols-7 calendar-row">
+				{{/unless}}
+				{{> calendar-day this}}
+			{{/each}}
+			{{#each after}}
+				<div class="col calendar-day"></div>
+			{{/each}}
+		</div>
+    </script>
+	<!-----------------------------------
+	|||        calendar-day           |||
+	------------------------------------>
+    <script id="calendar-day" type="text/x-handlebars-template">
+		<div class="col pt-5 pt-md-4 calendar-day{{#if date.isToday}} border-primary calendar-day-today{{/if}}{{#if date.isTomorrow}} calendar-day-tomorrow{{/if}}{{#if date.isFuture}} calendar-day-future{{/if}}">
+			<span class="date">{{date.shortString}}</span>
+			<a data-toggle="tooltip" data-placement="bottom" title="{{data.name}}">
+				<img src="{{data.imgUrl}}" alt="{{data.name}}" class="rounded-circle"/>
+			</a>
+		</div>
+    </script>
+
+	<!---------------------------------------
+	|||   history-choosers
+	---------------------------------------->
+    <script id="template-history-choosers" type="text/x-handlebars-template">
+		<nav aria-label="Participant">
+			<ul class="pagination pagination-sm justify-content-end">
+				{{#each participants}}
+					<li id="history-participant-button-{{@index}}" class="history-participant-button page-item"><a class="page-link" href="javascript:clickHistoryParticipant({{@index}});">{{this}}</a></li>
+				{{/each}}
+			</ul>
+		</nav>
+			<nav aria-label="Number of days">
+			  <ul class="pagination pagination-sm justify-content-end">
+			  	{{#each dayChoosers}}
+					<li id="history-days-button-{{this}}"  class="history-days-button page-item"><a class="page-link" href="javascript:clickHistoryDays({{this}});">{{this}}</a></li>
+				{{/each}}
+			  </ul>
+			</nav>
+    </script>
+
 
 
 	<!----------------------------------
@@ -197,6 +316,10 @@
 	------------------------------------>
     <script>
 		function renderTemplates(){
+			renderParticipant();
+			renderHistory();
+		}
+		function renderParticipant(){
 			Handlebars.registerPartial("daycard", document.getElementById('template-daycard').innerHTML);
 
             // Compile the Handlebars template
@@ -213,6 +336,19 @@
             // Insert the compiled HTML into the page
             document.getElementById('main-container').innerHTML = compiledHtml;
 		}
+		function renderHistory(){
+            // Compile the Handlebars template
+            const templateSource = document.getElementById('template-history-choosers').innerHTML;
+            const template = Handlebars.compile(templateSource);
+            
+            
+            // Pass the data to the template
+			var compiledHtml =  template({participants: globalSettings.participants, dayChoosers: [30, 90, 180, 365]});
+            
+            // Insert the compiled HTML into the page
+            document.getElementById('history-choosers').innerHTML = compiledHtml;
+		}
+
 
     </script>
 
@@ -250,14 +386,67 @@
                 console.error('There has been a problem with your fetch operation:', error);
             }
 		}
+
+		async function fetchHistory(){
+			Handlebars.registerPartial("calendar-day", document.getElementById('calendar-day').innerHTML);
+			let participant = globalSettings.participants[currentHistoryParticipantId];
+			try {
+                const response = await fetch('/.netlify/functions/api/history?userseed='+participant+'&days='+currentHistoryDays);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = (await response.json()).data;
+                
+                // Compile the Handlebars template
+                const templateSource = document.getElementById('template-calendar-main').innerHTML;
+                const template = Handlebars.compile(templateSource);
+                
+                // Pass the data to the template
+				const numBefore = data[0].date.weekdayNum;
+				const numAfter = 6-data[data.length-1].date.weekdayNum;
+                const compiledHtml = template({before: [...Array(numBefore).keys()], days: data, after: [...Array(numAfter).keys()]});
+                
+                // Insert the compiled HTML into the page
+                document.getElementById('history-calendar').innerHTML = compiledHtml;
+                
+                //Activate "participant" button
+				let participantButtons = document.getElementsByClassName('history-participant-button');
+				for (var i = 0; i < participantButtons.length; i++) {
+					participantButtons[i].classList.remove("active");
+				}
+				document.getElementById('history-participant-button-'+currentHistoryParticipantId).classList.add("active");
+
+                //Activate "days" button
+				let daysButtons = document.getElementsByClassName('history-days-button');
+				for (var i = 0; i < daysButtons.length; i++) {
+					daysButtons[i].classList.remove("active");
+				}
+				document.getElementById('history-days-button-'+currentHistoryDays).classList.add("active");
+				
+            } catch (error) {
+                console.error('There has been a problem with your fetch operation:', error);
+            }
+		}
+
+		function clickHistoryParticipant(participantId){
+			currentHistoryParticipantId = participantId;
+			fetchHistory();
+		}
+
+		function clickHistoryDays(days){
+			currentHistoryDays = days;
+			fetchHistory();
+		}
 	</script>
 
 
     <script>
+    	let currentHistoryParticipantId = 0, currentHistoryDays = 30;
 		function loadMain(){ 
 			loadSettings();
 			renderTemplates();
 			fetchData();
+			fetchHistory('Marcher', 30);
 		}
         // Display content when the page loads
         document.addEventListener('DOMContentLoaded', loadMain);
