@@ -1,10 +1,10 @@
-name;weight;imgUrl;color
-Take 10,000 steps today.;10;/assets/10000steps.webp;#CC564A
-Run or jog for 30 minutes.;9;/assets/30minrunorjog.webp;#CC8F4D
-Complete a 20-minute HIIT session.;8;/assets/hiit.webp;#CCB16D
-Do a 45-minute dance workout.;7;/assets/dance.webp;#52A866
-Go for a 5 km walk or run.;6;/assets/5kwalkorrun.webp;#57BC77
-Jump rope for a total of 10 minutes.;5;/assets/jumprope.webp;#5282CC
-Do a 30-minute cycling session.;4;/assets/cycling.webp;#625EAB
-Climb 20 flights of stairs.;3;/assets/stairclimp.webp;#936FB0
-Walk instead of using any transportation for all short trips today.;1;/assets/transportation.webp;#CC7A82
+name;description;weight;imgUrl;color
+10k steps;Take 10,000 steps today.;10;/assets/10000steps.webp;#CC564A
+30 min run/walk;Run or jog for 30 minutes.;9;/assets/30minrunorjog.webp;#CC8F4D
+20 min HIIT;Complete a 20-minute HIIT session.;8;/assets/hiit.webp;#CCB16D
+45 min dance;Do a 45-minute dance workout.;7;/assets/dance.webp;#52A866
+5 km walk/run;Go for a 5 km walk or run.;6;/assets/5kwalkorrun.webp;#57BC77
+10 min jumprope;Jump rope for a total of 10 minutes.;5;/assets/jumprope.webp;#5282CC
+30 min cycle;Do a 30-minute cycling session.;4;/assets/cycling.webp;#625EAB
+20 flights;Climb 20 flights of stairs.;3;/assets/stairclimp.webp;#936FB0
+Transportation;Walk instead of using any transportation for all short trips today.;1;/assets/transportation.webp;#CC7A82

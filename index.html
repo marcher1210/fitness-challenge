@@ -93,7 +93,7 @@
 					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">
 					  <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5z"/>
 					</svg>
-					<span class="d-none d-sm-inline">Challenge</span>
+					<span class="d-none d-sm-inline">Daily challenge</span>
 				</a>
             </li>
             <li class="nav-item">
@@ -103,6 +103,15 @@
 					  <path d="M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2"/>
 					</svg>
 					<span class="d-none d-sm-inline">History</span>
+				</a>
+            </li>
+            <li class="nav-item">
+				<a class="nav-link" href="#challengelist">
+					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-card-list" viewBox="0 0 16 16">
+					  <path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2z"/>
+					  <path d="M5 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 5 8m0-2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m0 5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m-1-5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0M4 8a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0m0 2.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0"/>
+					</svg> 
+					<span class="d-none d-sm-inline">Overview of challenges</span>
 				</a>
             </li>
             <li class="nav-item">
@@ -131,6 +140,14 @@
 			<div class="container-fluid" id="history-choosers"></div>
 			<div class="container-fluid" id="history-calendar"></div>
 		</div>
+    </div>
+
+    <!--- Challenges --->
+    <div id="challengelist" class="section container-fluid bg-secondary pt-5 min-vh-100">
+        <h1>Overview of challenges</h1>
+        <div id="challengelist-container" class="container mt-5 bg-light border rounded-2 p-4">
+			
+        </div>
     </div>
 
 	<!--- Settings --->
@@ -253,6 +270,36 @@
 			</nav>
     </script>
 
+    <!----------------------------------
+    |||      challengelist-container          |||
+    ------------------------------------>
+    <script id="template-challengelist-container" type="text/x-handlebars-template">
+    	<div class="row">
+	        {{#each this}}
+	          {{> challenge-description-card this}}
+	        {{/each}}
+    	</div>
+    </script>
+
+    <!-----------------------------------
+    |||   challenge-description-card  |||
+    ------------------------------------>
+    <script id="challenge-description-card" type="text/x-handlebars-template">
+        <div class="col-lg-2 col-md-4 col-sm-6 my-2">
+            <div class="card h-100">
+              <div class="card-header">
+                <h5 class="card-title">{{name}}</h3>
+              </div>
+                <img alt="{{name}}" src="{{imgUrl}}" class="card-img-top rounded-circle w-50 mx-auto mt-3"/>
+              <div class="card-body">
+                <h6>Frequency <small>({{chance}})</small></h6>
+                <p class="card-text">{{frequency}}</p>
+                <h6>Description</h6>
+                <p class="card-text">{{description}}</p>
+              </div>
+            </div>
+        </div>
+    </script>
 
 
 	<!----------------------------------
@@ -427,6 +474,30 @@
                 console.error('There has been a problem with your fetch operation:', error);
             }
 		}
+        
+        async function fetchChallengeList() {
+        	Handlebars.registerPartial("challenge-description-card", document.getElementById('challenge-description-card').innerHTML);
+            try {
+                const response = await fetch('/.netlify/functions/api/challengelist');
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+
+                // Compile the Handlebars template
+                const templateSource = document.getElementById('template-challengelist-container').innerHTML;
+                const template = Handlebars.compile(templateSource);
+                
+                // Pass the data to the template
+                const compiledHtml = template(data.data);
+                
+                // Insert the compiled HTML into the page
+                document.getElementById('challengelist-container').innerHTML = compiledHtml;
+                
+            } catch (error) {
+                console.error('There has been a problem with your fetch operation:', error);
+            }
+        }
 
 		function clickHistoryParticipant(participantId){
 			currentHistoryParticipantId = participantId;
@@ -447,6 +518,7 @@
 			renderTemplates();
 			fetchData();
 			fetchHistory();
+			fetchChallengeList();
 		}
         // Display content when the page loads
         document.addEventListener('DOMContentLoaded', loadMain);
