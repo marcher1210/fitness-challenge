@@ -9,13 +9,16 @@ class RandomPicker {
 	}
 
 	reseed() {
-		const seed = this.baseseed + this.userseed;
-		this.random = seedrandom(seed);
+		this.random = seedrandom(this.getFullSeed());
 	}
 
 	setUserseed(userseed){
 		this.userseed = userseed;
 		this.reseed();
+	}
+
+	getFullSeed(){
+		return this.baseseed + this.userseed;
 	}
 
 	getRandom() {
