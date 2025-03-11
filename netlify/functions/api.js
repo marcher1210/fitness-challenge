@@ -45,6 +45,19 @@ function buildDateObject(date) {
   };
 }
 
+function calculateStatistics(data){
+	let counts = data.reduce((a, v) => {
+		a[v.data.name] = (a[v.data.name] ?? 0) + 1;
+		return a;
+	}, {});
+	const total = Object.keys(counts).reduce((a, v) => {return a+counts[v];},0);
+	let response = Object.keys(counts).reduce((a, v) => {
+		a[v] = {count: counts[v], frequency: (counts[v]/total*100).toPrecision(3)};
+		return a;
+	},{});
+	return {asd: response, total: total};
+}
+
 exports.handler = async (event) => {
     const path = event.path.split('/').pop(); // Get the last segment of the path
     const params = {
@@ -91,6 +104,7 @@ exports.handler = async (event) => {
 		            data: selectedValue
 		        };
 		    });
+    		data['statistics'] = calculateStatistics(selections);
 		    data['data'] = selections;
             break;
     }
