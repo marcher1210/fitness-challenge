@@ -61,13 +61,51 @@ function getListHistory(listtitle, userseed, fromdate, todate) {
     	list.setUserseed(userseed + mapdate.toISOString());
         const selectedValue = list.getRandomElement();
         return {
-            date: mapdate,
+            date: buildDateObject(mapdate),
             data: selectedValue
         };
     });
 
 
 	return selections;
+}
+
+function isToday(date){
+	let date1 = new Date(date.getTime());
+	let today = new Date();
+	date1.setUTCHours(0,0,0,0);
+	today.setUTCHours(0,0,0,0);
+	return date1.getTime() == today.getTime();
+}
+
+function isTomorrow(date){
+	let date1 = new Date(date.getTime());
+	let today = new Date();
+	date1.setDate(date1.getDate()-1);
+	date1.setUTCHours(0,0,0,0);
+	
+	today.setUTCHours(0,0,0,0);
+	return date1.getTime() == today.getTime();
+}
+
+function isFuture(date){
+	return date > new Date();
+}
+
+function realWeekdayNum(date){
+	return (date.getDay()+6)%7;
+}
+
+function buildDateObject(date) {
+  return {
+	  date: date,
+	  mediumString: date.toISOString().split('T')[0],
+	  shortString: date.toLocaleDateString('en-uk', { month:"short", day: "numeric"}),
+	  weekdayNum: realWeekdayNum(date),
+	  isToday: isToday(date),
+	  isTomorrow: isTomorrow(date),
+	  isFuture: isFuture(date)
+  };
 }
 
 
