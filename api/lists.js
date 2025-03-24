@@ -62,7 +62,7 @@ function getListHistory(listtitle, userseed, fromdate, todate) {
         const selectedValue = list.getRandomElement();
         return {
             date: buildDateObject(mapdate),
-            data: selectedValue
+            element: selectedValue
         };
     });
 
