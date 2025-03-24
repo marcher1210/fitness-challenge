@@ -1,0 +1,6 @@
+name;description;weight;imgUrl;color
+10k steps;Take 10,000 steps today.;20;/assets/10000steps.webp;#CC564A
+30 min run/walk;Run or jog for 30 minutes.;20;/assets/30minrunorjog.webp;#CC8F4D
+5 km walk/run;Go for a 5 km walk or run.;15;/assets/5kwalkorrun.webp;#57BC77
+20 flights;Climb 20 flights of stairs.;7;/assets/stairclimp.webp;#936FB0
+Transportation;Walk instead of using any transportation for all short trips today.;1;/assets/transportation.webp;#CC7A82

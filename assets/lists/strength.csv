@@ -1,0 +1,4 @@
+name;description;weight;imgUrl;color
+20 min HIIT;Complete a 20-minute HIIT session.;10;/assets/hiit.webp;#CCB16D
+45 min dance;Do a 45-minute dance workout.;1;/assets/dance.webp;#52A866
+10 min jumprope;Jump rope for a total of 10 minutes.;3;/assets/jumprope.webp;#5282CC
