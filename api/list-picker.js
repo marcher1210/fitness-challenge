@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const sync = require('csv-parse/sync');
 
-class RandomPicker {
+class ListPicker {
 
 	constructor(baseseed, filePath) {
 		this.baseseed = baseseed;
@@ -62,4 +62,4 @@ class RandomPicker {
 }
 
 
-module.exports = RandomPicker;
+module.exports = ListPicker;
