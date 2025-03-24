@@ -169,6 +169,14 @@
                 </div>
                 <button type="button" class="btn btn-secondary btn-sm mt-2" id="addParticipantItem">Add Participant</button>
             </div>
+            <div class="form-group">
+                <label for="list">List</label>
+                <select id="list" class="form-select">
+                    <option value="challenges">Challenges</option>
+                    <option value="run">Run</option>
+                    <option value="strength">Strength</option>
+                </select>
+            </div>
             <button type="button" class="btn btn-primary" id="saveSettings">Save</button>
             <button type="button" class="btn btn-secondary" id="resetSettings">Reset</button>
         </form>
@@ -314,7 +322,8 @@
 	------------------------------------>
 	<script>
         const defaultSettings = {
-            participants: ['Marcher', 'Mathias', 'Nord']
+            participants: ['Marcher', 'Mathias', 'Nord'],
+            list: 'run'
         };
         var globalSettings = {};
 		
@@ -324,7 +333,7 @@
             const settings = {
                 //username: document.getElementById('username').value,
                 //volume: document.getElementById('volume').value,
-                //theme: document.getElementById('theme').value,
+                list: document.getElementById('list').value,
                 participants: participantValues
             };
             document.cookie = `settings=${JSON.stringify(settings)};path=/;max-age=31536000`;
@@ -338,7 +347,7 @@
 
             //document.getElementById('username').value = settings.username;
             //document.getElementById('volume').value = settings.volume;
-            //document.getElementById('theme').value = settings.theme;
+            document.getElementById('list').value = settings.list;
 
             const participantsContainer = document.getElementById('participantsContainer');
             participantsContainer.innerHTML = '';
@@ -424,7 +433,7 @@
 
 		async function fetchCard(id, participant, dayname, date){
 			try {
-                const response = await fetch('/api/lists/challenges/element?userseed='+participant+'&date='+date.toISOString().split('T')[0]);
+                const response = await fetch('/api/lists/'+globalSettings.list+'/element?userseed='+participant+'&date='+date.toISOString().split('T')[0]);
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
@@ -446,9 +455,10 @@
 			let participant = globalSettings.participants[currentHistoryParticipantId];
 			try {
 				const todate = new Date();
+				todate.setDate(todate.getDate()+1);
 				const fromdate = new Date();
 				fromdate.setDate(fromdate.getDate() - currentHistoryDays);
-                const response = await fetch('/api/lists/challenges/history?userseed='+participant+'&fromdate='+fromdate.toISOString().split('T')[0]+'&todate='+todate.toISOString().split('T')[0]);
+                const response = await fetch('/api/lists/'+globalSettings.list+'/history?userseed='+participant+'&fromdate='+fromdate.toISOString().split('T')[0]+'&todate='+todate.toISOString().split('T')[0]);
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
@@ -488,7 +498,7 @@
         async function fetchChallengeList() {
         	Handlebars.registerPartial("challenge-description-card", document.getElementById('challenge-description-card').innerHTML);
             try {
-                const response = await fetch('/api/lists/challenges');
+                const response = await fetch('/api/lists/'+globalSettings.list);
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
