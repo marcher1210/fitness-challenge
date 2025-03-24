@@ -1,3 +1,8 @@
+const config = {
+    seed: 'goodseed'
+};
+
+
 /* * * * * * * * * * * * * * 
  * [...]/lists/
  * * * * * * * * * * * * * */
@@ -10,14 +15,25 @@ function getAllLists(){
  * [...]/lists/{listtitle}/	
  * * * * * * * * * * * * * */
 function getList(listtitle) {
-	return {list: title, elements: [{title: "Number 1", weight: 1, imageurl: "/...", description: "Element 1"},{title: "Number 2", weight: 2, imageurl: "/...", description: "Element 2"}]};
+	const List  = require('./csv-list');
+    const list = new List(config.seed, "./assets/lists/"+listtitle+".csv");
+    
+	return {list: listtitle, elements: list.getFullList()};
 }
 
 /* * * * * * * * * * * * * * 
  * [...]/lists/{listtitle}/element?userseed={userseed}&date={datestring}
  * * * * * * * * * * * * * */
 function getListElement(listtitle, userseed, date) {
-	return {date: date, element: {title: "Number 1", weight: 1, imageurl: "/...", description: "Element 1"}};
+	const List  = require('./csv-list');
+    const list = new List(config.seed, "./assets/lists/"+listtitle+".csv");
+
+    const dateobj = (date) ? new Date(date) : new Date();
+	dateobj.setUTCHours(0,0,0,0);
+
+	list.setUserseed(userseed + dateobj.toISOString());
+
+	return {date: dateobj, element: list.getRandomElement()};
 }
 
 
@@ -25,7 +41,33 @@ function getListElement(listtitle, userseed, date) {
  * [...]/lists/{listtitle}/history?userseed={userseed}&fromdate={datestring}&todate={datestring}
  * * * * * * * * * * * * * */
 function getListHistory(listtitle, userseed, fromdate, todate) {
-	return [{date: fromdate, element: {title: "Number 1", weight: 1, imageurl: "/...", description: "Element 1"}},{date: todate, element: {title: "Number 2", weight: 2, imageurl: "/...", description: "Element 2"}}];
+	const List  = require('./csv-list');
+    const list = new List(config.seed, "./assets/lists/"+listtitle+".csv");
+
+	let datesToProcess = [];
+
+	let currentdate = new Date(fromdate);
+	currentdate.setUTCHours(0,0,0,0);
+
+	const todateobj = new Date(todate);
+	todateobj.setUTCHours(0,0,0,0);
+
+	while(currentdate <= todateobj) {
+		datesToProcess.push(new Date(currentdate));
+        currentdate.setDate(currentdate.getDate() + 1);
+	}
+
+    var selections = datesToProcess.map(mapdate => {
+    	list.setUserseed(userseed + mapdate.toISOString());
+        const selectedValue = list.getRandomElement();
+        return {
+            date: mapdate,
+            data: selectedValue
+        };
+    });
+
+
+	return selections;
 }
 
 
@@ -49,7 +91,9 @@ exports.handler = async (event) => {
 	    }
 
 	    const functionname = pathparts[2];
-	    if(functionname == "") {data = getList(listtitle);}
+	    if(!functionname || functionname == "") {
+	    	data = getList(listtitle);
+	    }
 	    else if(functionname == "element"){
 	    	const date = event.queryStringParameters?.date;
         	const userseed = event.queryStringParameters?.userseed ?? '';
