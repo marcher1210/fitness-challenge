@@ -455,7 +455,7 @@
 			let participant = globalSettings.participants[currentHistoryParticipantId];
 			try {
 				const todate = new Date();
-				todate.setDate(todate.getDate()+1);
+				todate.setDate(todate.getDate()+(7-todate.getDay()));
 				const fromdate = new Date();
 				fromdate.setDate(fromdate.getDate() - currentHistoryDays);
                 const response = await fetch('/api/lists/'+globalSettings.list+'/history?userseed='+participant+'&fromdate='+fromdate.toISOString().split('T')[0]+'&todate='+todate.toISOString().split('T')[0]);

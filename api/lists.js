@@ -1,6 +1,8 @@
 const config = {
     seed: 'goodseed',
     apiUrl: '/api/lists/',
+    futureHours: 12, //How many hours before a future date can you get an element
+    futureElement: { name: "Coming", imgUrl: "/assets/unknown.webp"},
     lists: ['challenges', 'run', 'strength']
 };
 
@@ -36,7 +38,9 @@ function getListElement(listtitle, userseed, date) {
 
 	list.setUserseed(userseed + dateobj.toISOString());
 	const dateobj2 = buildDateObject(dateobj);
-    const selectedValue = list.getRandomElement();
+
+	const today = new Date();
+    const selectedValue = (((dateobj - today) / 60 / 60 / 1000) < config.futureHours) ? list.getRandomElement(): config.futureElement;
     return {
         date: dateobj2, 
         url: config.apiUrl+listtitle+'/element?userseed='+userseed+'&date='+dateobj2.mediumString,
@@ -65,12 +69,15 @@ function getListHistory(listtitle, userseed, fromdate, todate) {
         currentdate.setDate(currentdate.getDate() + 1);
 	}
 
+	const today = new Date();
+
     var selections = datesToProcess.map(mapdate => {
     	list.setUserseed(userseed + mapdate.toISOString());
     	const dateobj = buildDateObject(mapdate);
-        const selectedValue = list.getRandomElement();
+        const selectedValue = (((mapdate - today) / 60 / 60 / 1000) < config.futureHours) ? list.getRandomElement(): config.futureElement;
         return {
             date: dateobj, 
+            diff: (mapdate - today) / 60 / 60 / 1000,
             url: config.apiUrl+listtitle+'/element?userseed='+userseed+'&date='+dateobj.mediumString,
             element: selectedValue
         };
