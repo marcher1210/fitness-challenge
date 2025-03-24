@@ -1,5 +1,7 @@
 const config = {
-    seed: 'goodseed'
+    seed: 'goodseed',
+    apiUrl: '/api/lists/',
+    lists: ['challenges', 'run', 'strength']
 };
 
 
@@ -7,7 +9,8 @@ const config = {
  * [...]/lists/
  * * * * * * * * * * * * * */
 function getAllLists(){
-	return ['challenges', 'run', 'strength'];
+
+	return config.lists.map(list => {return {title: list, url: config.apiUrl+list+'/'};});
 }
 
 
@@ -18,7 +21,7 @@ function getList(listtitle) {
 	const List  = require('./weighted-list-picker');
     const list = new List(config.seed, "./assets/lists/"+listtitle+".csv");
     
-	return {list: listtitle, elements: list.getFullList()};
+	return {title: listtitle, url: config.apiUrl+listtitle+'/', elements: list.getFullList()};
 }
 
 /* * * * * * * * * * * * * * 
@@ -32,8 +35,13 @@ function getListElement(listtitle, userseed, date) {
 	dateobj.setUTCHours(0,0,0,0);
 
 	list.setUserseed(userseed + dateobj.toISOString());
-
-	return {date: dateobj, element: list.getRandomElement()};
+	const dateobj2 = buildDateObject(dateobj);
+    const selectedValue = list.getRandomElement();
+    return {
+        date: dateobj2, 
+        url: config.apiUrl+listtitle+'/element?userseed='+userseed+'&date='+dateobj2.mediumString,
+        element: selectedValue
+    };
 }
 
 
@@ -59,9 +67,11 @@ function getListHistory(listtitle, userseed, fromdate, todate) {
 
     var selections = datesToProcess.map(mapdate => {
     	list.setUserseed(userseed + mapdate.toISOString());
+    	const dateobj = buildDateObject(mapdate);
         const selectedValue = list.getRandomElement();
         return {
-            date: buildDateObject(mapdate),
+            date: dateobj, 
+            url: config.apiUrl+listtitle+'/element?userseed='+userseed+'&date='+dateobj.mediumString,
             element: selectedValue
         };
     });
@@ -120,7 +130,7 @@ exports.handler = async (event) => {
     }
     else {
 	    const listtitle = pathparts[1];
-	    if(!getAllLists().includes(listtitle)) {
+	    if(!config.lists.includes(listtitle)) {
 
 		    return {
 		        statusCode: 404,
