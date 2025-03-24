@@ -1,19 +1,36 @@
+const seedrandom = require('seedrandom');
 const fs = require('fs');
 const path = require('path');
 const sync = require('csv-parse/sync');
 
+class ListPicker {
 
-const RandomPicker = require('./random-picker');
-class RandomCsvPicker extends RandomPicker {
-
-    constructor(seed, filePath) {
-        super(seed);
-        this.filePath = filePath;
+	constructor(baseseed, filePath) {
+		this.baseseed = baseseed;
+		this.userseed = '';
+		this.reseed();
+		this.filePath = filePath;
         this.records = [];
         this.loadRecords();
-    }
+	}
 
-    // Load words from the file
+	reseed() {
+		this.random = seedrandom(this.getFullSeed());
+	}
+
+	setUserseed(userseed){
+		this.userseed = userseed;
+		this.reseed();
+	}
+
+	getFullSeed(){
+		return this.baseseed + this.userseed;
+	}
+
+	getRandom() {
+		return this.random();
+	}
+	// Load words from the file
     loadRecords() {
         try {
             const fileContent = fs.readFileSync(this.filePath, 'utf-8');
@@ -44,4 +61,5 @@ class RandomCsvPicker extends RandomPicker {
     }
 }
 
-module.exports = RandomCsvPicker;
+
+module.exports = ListPicker;

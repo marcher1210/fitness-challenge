@@ -1,9 +1,9 @@
 const Chooser = require("random-seed-weighted-chooser").default;
 
-const RandomCsvPicker = require('./random-csv');
-class RandomChallengePicker extends RandomCsvPicker {
-    constructor(seed) {
-        super(seed,'./assets/challenges.csv');
+const ListPicker = require('./list-picker');
+class WeightedListPicker extends ListPicker {
+    constructor(seed, filePath) {
+        super(seed,filePath);
         for (var i = this.records.length - 1; i >= 0; i--) {
             this.records[i].weight = Number(this.records[i].weight);
         }
@@ -47,4 +47,4 @@ class RandomChallengePicker extends RandomCsvPicker {
     }
 
 }
-module.exports = RandomChallengePicker;
+module.exports = WeightedListPicker;

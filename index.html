@@ -169,6 +169,14 @@
                 </div>
                 <button type="button" class="btn btn-secondary btn-sm mt-2" id="addParticipantItem">Add Participant</button>
             </div>
+            <div class="form-group">
+                <label for="list">List</label>
+                <select id="list" class="form-select">
+                    <option value="challenges">Challenges</option>
+                    <option value="run">Run</option>
+                    <option value="strength">Strength</option>
+                </select>
+            </div>
             <button type="button" class="btn btn-primary" id="saveSettings">Save</button>
             <button type="button" class="btn btn-secondary" id="resetSettings">Reset</button>
         </form>
@@ -251,8 +259,8 @@
     <script id="calendar-day" type="text/x-handlebars-template">
 		<div class="col pt-5 pt-md-4 calendar-day{{#if date.isToday}} border-primary calendar-day-today{{/if}}{{#if date.isTomorrow}} calendar-day-tomorrow{{/if}}{{#if date.isFuture}} calendar-day-future{{/if}}">
 			<span class="date">{{date.shortString}}</span>
-			<a data-toggle="tooltip" data-placement="bottom" title="{{data.name}}">
-				<img src="{{data.imgUrl}}" alt="{{data.name}}" class="rounded-circle"/>
+			<a data-toggle="tooltip" data-placement="bottom" title="{{element.name}}">
+				<img src="{{element.imgUrl}}" alt="{{element.name}}" class="rounded-circle" style="border-color: {{element.color}}; border-style:solid;border-width: 5px;"/>
 			</a>
 		</div>
     </script>
@@ -314,7 +322,8 @@
 	------------------------------------>
 	<script>
         const defaultSettings = {
-            participants: ['Marcher', 'Mathias', 'Nord']
+            participants: ['Marcher', 'Mathias', 'Nord'],
+            list: 'run'
         };
         var globalSettings = {};
 		
@@ -324,7 +333,7 @@
             const settings = {
                 //username: document.getElementById('username').value,
                 //volume: document.getElementById('volume').value,
-                //theme: document.getElementById('theme').value,
+                list: document.getElementById('list').value,
                 participants: participantValues
             };
             document.cookie = `settings=${JSON.stringify(settings)};path=/;max-age=31536000`;
@@ -338,7 +347,7 @@
 
             //document.getElementById('username').value = settings.username;
             //document.getElementById('volume').value = settings.volume;
-            //document.getElementById('theme').value = settings.theme;
+            document.getElementById('list').value = settings.list;
 
             const participantsContainer = document.getElementById('participantsContainer');
             participantsContainer.innerHTML = '';
@@ -424,7 +433,7 @@
 
 		async function fetchCard(id, participant, dayname, date){
 			try {
-                const response = await fetch('/.netlify/functions/api/random-challenge?userseed='+participant+'&date='+date.toISOString().split('T')[0]);
+                const response = await fetch('/api/lists/'+globalSettings.list+'/element?userseed='+participant+'&date='+date.toISOString().split('T')[0]);
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
@@ -432,9 +441,9 @@
 
                 const container = document.getElementById('participant-'+id).getElementsByClassName(dayname+'-card')[0];
 								
-				container.getElementsByClassName('card-text')[0].innerHTML = data.data.name;
+				container.getElementsByClassName('card-text')[0].innerHTML = data.element.name;
 				//container.getElementsByClassName('card-footer')[0].innerHTML = data.date.mediumString;
-				container.getElementsByClassName('card-img-top')[0].src = data.data.imgUrl;
+				container.getElementsByClassName('card-img-top')[0].src = data.element.imgUrl;
 				
             } catch (error) {
                 console.error('There has been a problem with your fetch operation:', error);
@@ -445,11 +454,15 @@
 			Handlebars.registerPartial("calendar-day", document.getElementById('calendar-day').innerHTML);
 			let participant = globalSettings.participants[currentHistoryParticipantId];
 			try {
-                const response = await fetch('/.netlify/functions/api/history?userseed='+participant+'&days='+currentHistoryDays);
+				const todate = new Date();
+				todate.setDate(todate.getDate()+1);
+				const fromdate = new Date();
+				fromdate.setDate(fromdate.getDate() - currentHistoryDays);
+                const response = await fetch('/api/lists/'+globalSettings.list+'/history?userseed='+participant+'&fromdate='+fromdate.toISOString().split('T')[0]+'&todate='+todate.toISOString().split('T')[0]);
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
-                const data = (await response.json()).data;
+                const data = (await response.json());
                 
                 // Compile the Handlebars template
                 const templateSource = document.getElementById('template-calendar-main').innerHTML;
@@ -485,7 +498,7 @@
         async function fetchChallengeList() {
         	Handlebars.registerPartial("challenge-description-card", document.getElementById('challenge-description-card').innerHTML);
             try {
-                const response = await fetch('/.netlify/functions/api/challengelist');
+                const response = await fetch('/api/lists/'+globalSettings.list);
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
@@ -496,11 +509,11 @@
                 const template = Handlebars.compile(templateSource);
                 
                 // Pass the data to the template
-                const compiledHtml = template(data.data);
+                const compiledHtml = template(data.elements);
                 
                 // Insert the compiled HTML into the page
                 document.getElementById('challengelist-container').innerHTML = compiledHtml;
-                drawCircleDiagram(data.data);
+                drawCircleDiagram(data.elements);
             } catch (error) {
                 console.error('There has been a problem with your fetch operation:', error);
             }
