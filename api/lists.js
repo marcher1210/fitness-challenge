@@ -15,7 +15,7 @@ function getAllLists(){
  * [...]/lists/{listtitle}/	
  * * * * * * * * * * * * * */
 function getList(listtitle) {
-	const List  = require('./list-picker');
+	const List  = require('./weighted-list-picker');
     const list = new List(config.seed, "./assets/lists/"+listtitle+".csv");
     
 	return {list: listtitle, elements: list.getFullList()};
@@ -25,7 +25,7 @@ function getList(listtitle) {
  * [...]/lists/{listtitle}/element?userseed={userseed}&date={datestring}
  * * * * * * * * * * * * * */
 function getListElement(listtitle, userseed, date) {
-	const List  = require('./list-picker');
+	const List  = require('./weighted-list-picker');
     const list = new List(config.seed, "./assets/lists/"+listtitle+".csv");
 
     const dateobj = (date) ? new Date(date) : new Date();
@@ -41,7 +41,7 @@ function getListElement(listtitle, userseed, date) {
  * [...]/lists/{listtitle}/history?userseed={userseed}&fromdate={datestring}&todate={datestring}
  * * * * * * * * * * * * * */
 function getListHistory(listtitle, userseed, fromdate, todate) {
-	const List  = require('./list-picker');
+	const List  = require('./weighted-list-picker');
     const list = new List(config.seed, "./assets/lists/"+listtitle+".csv");
 
 	let datesToProcess = [];
