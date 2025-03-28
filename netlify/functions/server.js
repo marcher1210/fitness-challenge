@@ -23,8 +23,8 @@ app.get('/history', (req, res) => {
   res.render('history');
 });
 
-app.get('/rules', (req, res) => {
-  res.render('rules');
+app.get('/overview', (req, res) => {
+  res.render('overview');
 });
 
 app.get('/settings', (req, res) => {

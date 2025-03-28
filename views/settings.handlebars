@@ -1,4 +1,81 @@
-<div class="jumbotron">
-  <h1 class="display-4">Frontpage</h1>
-  <p class="lead">Welcome to the front page of our Express Handlebars application deployed on Netlify.</p>
-</div>
+<!--- Settings --->
+  <div id="settings" class="section container-fluid bg-dark bg-gradient text-white pt-5 min-vh-100">
+        <h3 class="text-center">Settings</h3>
+        <form id="settingsForm" class="container text-center mt-5" >
+            <div class="form-group">
+                <label>Participants</label>
+                <div id="participantsContainer">
+                    <div class="array-item">
+                        <input type="text" class="form-control participant-input" placeholder="Enter participant name">
+                        <button type="button" class="btn btn-danger btn-sm remove-participant-item">-</button>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-secondary btn-sm mt-2" id="addParticipantItem">Add Participant</button>
+            </div>
+            <div class="form-group">
+                <label for="list">List</label>
+                <select id="list" class="form-select">
+                    <option value="challenges">Challenges</option>
+                    <option value="run">Run</option>
+                    <option value="strength">Strength</option>
+                </select>
+            </div>
+            <button type="button" class="btn btn-primary" id="saveSettings">Save</button>
+            <button type="button" class="btn btn-secondary" id="resetSettings">Reset</button>
+        </form>
+    </div>
+  <!----------------------------------
+  |||      Settings functionality   |||
+  ------------------------------------>
+  <script>
+    
+        function saveSettings() {
+            const participantInputs = document.querySelectorAll('.participant-input');
+            const participantValues = Array.from(participantInputs).map(input => input.value);
+            const settings = {
+                //username: document.getElementById('username').value,
+                //volume: document.getElementById('volume').value,
+                list: document.getElementById('list').value,
+                participants: participantValues
+            };
+            document.cookie = `settings=${JSON.stringify(settings)};path=/;max-age=31536000`;
+            
+            window.location.reload();
+        }
+
+        function populateSettings() {
+            loadSettings();
+
+            //document.getElementById('username').value = settings.username;
+            //document.getElementById('volume').value = settings.volume;
+            document.getElementById('list').value = globalSettings.list;
+
+            const participantsContainer = document.getElementById('participantsContainer');
+            participantsContainer.innerHTML = '';
+            globalSettings.participants.forEach(value => {
+                addParticipantItem(value);
+            });
+        }
+
+        function addParticipantItem(value = '') {
+            const participantsContainer = document.getElementById('participantsContainer');
+            const div = document.createElement('div');
+            div.className = 'array-item';
+            div.innerHTML = `
+                <input type="text" class="form-control participant-input" value="${value}" placeholder="Enter participant name">
+                <button type="button" class="btn btn-danger btn-sm remove-participant-item">-</button>
+            `;
+            div.querySelector('.remove-participant-item').addEventListener('click', () => div.remove());
+            participantsContainer.appendChild(div);
+        }
+
+        document.getElementById('addParticipantItem').addEventListener('click', () => addParticipantItem());
+        document.getElementById('saveSettings').addEventListener('click', saveSettings);
+        document.getElementById('resetSettings').addEventListener('click', loadSettings);
+    </script>
+
+
+    <script>
+        // Display content when the page loads
+        document.addEventListener('DOMContentLoaded', populateSettings);
+    </script>

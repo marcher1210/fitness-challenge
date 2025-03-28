@@ -1,4 +1,158 @@
-<div class="jumbotron">
-  <h1 class="display-4">Frontpage</h1>
-  <p class="lead">Welcome to the front page of our Express Handlebars application deployed on Netlify.</p>
-</div>
+<!--- History --->
+    <div id="history" class="section container-fluid bg-dark text-white py-5 min-vh-100">
+        <h1>History</h1>
+    <div  id="history" class="container bg-light text-dark border rounded-2 p-4">
+      <div class="container-fluid" id="history-choosers"></div>
+      <div class="container-fluid" id="history-calendar"></div>
+    </div>
+    </div>
+
+
+
+  <!---------------------------------------
+  |||   history-choosers
+  ---------------------------------------->
+    <script id="template-history-choosers" type="text/x-handlebars-template">
+    <nav aria-label="Participant">
+      <ul class="pagination pagination-sm justify-content-end">
+        {{#each participants}}
+          <li id="history-participant-button-{{@index}}" class="history-participant-button page-item"><a class="page-link" href="javascript:clickHistoryParticipant({{@index}});">{{this}}</a></li>
+        {{/each}}
+      </ul>
+    </nav>
+      <nav aria-label="Number of days">
+        <ul class="pagination pagination-sm justify-content-end">
+          {{#each dayChoosers}}
+          <li id="history-days-button-{{this}}"  class="history-days-button page-item"><a class="page-link" href="javascript:clickHistoryDays({{this}});">{{this}}</a></li>
+        {{/each}}
+        </ul>
+      </nav>
+    </script>
+
+    
+  <!-----------------------------------
+  |||      calendar-main           |||
+  ------------------------------------>
+    <script id="template-calendar-main" type="text/x-handlebars-template">
+     <div class="row row-cols-7 text-center">
+      <!-- Calendar header -->
+      <div class="col h4">Mon</div>
+      <div class="col h4">Tue</div>
+      <div class="col h4">Wed</div>
+      <div class="col h4">Thu</div>
+      <div class="col h4">Fri</div>
+      <div class="col h4">Sat</div>
+      <div class="col h4">Sun</div>
+    </div>
+    <div class="row row-cols-7 calendar-row">
+      {{#each before}}
+        <div class="col calendar-day"></div>
+      {{/each}}
+      {{#each days}}
+        {{#unless date.weekdayNum}}
+          </div><div class="row row-cols-7 calendar-row">
+        {{/unless}}
+        {{> calendar-day this}}
+      {{/each}}
+      {{#each after}}
+        <div class="col calendar-day"></div>
+      {{/each}}
+    </div>
+    </script>
+  <!-----------------------------------
+  |||        calendar-day           |||
+  ------------------------------------>
+    <script id="calendar-day" type="text/x-handlebars-template">
+    <div class="col pt-5 pt-md-4 calendar-day{{#if date.isToday}} border-primary calendar-day-today{{/if}}{{#if date.isTomorrow}} calendar-day-tomorrow{{/if}}{{#if date.isFuture}} calendar-day-future{{/if}}">
+      <span class="date">{{date.shortString}}</span>
+      <a data-toggle="tooltip" data-placement="bottom" title="{{element.name}}">
+        <img src="{{element.imgUrl}}" alt="{{element.name}}" class="rounded-circle" style="border-color: {{element.color}}; border-style:solid;border-width: 5px;"/>
+      </a>
+    </div>
+    </script>
+
+    <script type="text/javascript">
+
+    function renderTemplates(){
+      renderHistory();
+    }
+
+    function renderHistory(){
+            // Compile the Handlebars template
+            const templateSource = document.getElementById('template-history-choosers').innerHTML;
+            const template = Handlebars.compile(templateSource);
+            
+            
+            // Pass the data to the template
+      var compiledHtml =  template({participants: globalSettings.participants, dayChoosers: [30, 90, 180, 365]});
+            
+            // Insert the compiled HTML into the page
+            document.getElementById('history-choosers').innerHTML = compiledHtml;
+    }
+
+
+      async function fetchHistory(){
+      Handlebars.registerPartial("calendar-day", document.getElementById('calendar-day').innerHTML);
+      let participant = globalSettings.participants[currentHistoryParticipantId];
+      try {
+        const todate = new Date();
+        todate.setDate(todate.getDate()+(7-todate.getDay()));
+        const fromdate = new Date();
+        fromdate.setDate(fromdate.getDate() - currentHistoryDays);
+                const response = await fetch('/api/lists/'+globalSettings.list+'/history?userseed='+participant+'&fromdate='+fromdate.toISOString().split('T')[0]+'&todate='+todate.toISOString().split('T')[0]);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = (await response.json());
+                
+                // Compile the Handlebars template
+                const templateSource = document.getElementById('template-calendar-main').innerHTML;
+                const template = Handlebars.compile(templateSource);
+                
+                // Pass the data to the template
+        const numBefore = data[0].date.weekdayNum;
+        const numAfter = 6-data[data.length-1].date.weekdayNum;
+                const compiledHtml = template({before: [...Array(numBefore).keys()], days: data, after: [...Array(numAfter).keys()]});
+                
+                // Insert the compiled HTML into the page
+                document.getElementById('history-calendar').innerHTML = compiledHtml;
+                
+                //Activate "participant" button
+        let participantButtons = document.getElementsByClassName('history-participant-button');
+        for (var i = 0; i < participantButtons.length; i++) {
+          participantButtons[i].classList.remove("active");
+        }
+        document.getElementById('history-participant-button-'+currentHistoryParticipantId).classList.add("active");
+
+                //Activate "days" button
+        let daysButtons = document.getElementsByClassName('history-days-button');
+        for (var i = 0; i < daysButtons.length; i++) {
+          daysButtons[i].classList.remove("active");
+        }
+        document.getElementById('history-days-button-'+currentHistoryDays).classList.add("active");
+        
+            } catch (error) {
+                console.error('There has been a problem with your fetch operation:', error);
+            }
+    }
+
+    function clickHistoryParticipant(participantId){
+      currentHistoryParticipantId = participantId;
+      fetchHistory();
+    }
+
+    function clickHistoryDays(days){
+      currentHistoryDays = days;
+      fetchHistory();
+    }
+
+
+      let currentHistoryParticipantId = 0, currentHistoryDays = 30;
+    function loadMain(){ 
+      loadSettings();
+      renderTemplates();
+      fetchHistory();
+    }
+        // Display content when the page loads
+        document.addEventListener('DOMContentLoaded', loadMain);
+  </script>

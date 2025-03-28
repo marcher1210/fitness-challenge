@@ -1,0 +1,102 @@
+
+    <!--- Challenges --->
+    <div id="challengelist" class="section container-fluid bg-secondary pt-5 min-vh-100">
+        <h1>Overview of challenges</h1>
+        <div class="container mt-5 bg-light border rounded-2 p-4">
+          <div class="row">
+            <div class="col-lg-3 col-md-12">
+              <canvas id="circleDiagram"></canvas>
+            </div>
+            <div id="challengelist-container" class="col"></div>
+          </div>
+        </div>
+    </div>
+
+
+    <!----------------------------------
+    |||      challengelist-container          |||
+    ------------------------------------>
+    <script id="template-challengelist-container" type="text/x-handlebars-template">
+      <div class="row">
+          {{#each this}}
+            {{> challenge-description-card this}}
+          {{/each}}
+      </div>
+    </script>
+
+    <!-----------------------------------
+    |||   challenge-description-card  |||
+    ------------------------------------>
+    <script id="challenge-description-card" type="text/x-handlebars-template">
+        <div class="col-lg-3 col-md-6 col-sm-6 my-2">
+            <div class="card h-100">
+              <div class="card-header" style="background:{{color}};">
+                <h5 class="card-title">{{name}}</h3>
+              </div>
+                <img alt="{{name}}" src="{{imgUrl}}" class="card-img-top rounded-circle w-50 mx-auto mt-3"/>
+              <div class="card-body">
+                <h6>Frequency <small>({{chance}})</small></h6>
+                <p class="card-text">{{frequencytext}}</p>
+                <h6>Description</h6>
+                <p class="card-text">{{description}}</p>
+              </div>
+            </div>
+        </div>
+    </script>
+
+    <script>
+      async function fetchChallengeList() {
+        loadSettings();
+        Handlebars.registerPartial("challenge-description-card", document.getElementById('challenge-description-card').innerHTML);
+
+            try {
+                const response = await fetch('/api/lists/'+globalSettings.list);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+
+                // Compile the Handlebars template
+                const templateSource = document.getElementById('template-challengelist-container').innerHTML;
+                const template = Handlebars.compile(templateSource);
+                
+                // Pass the data to the template
+                const compiledHtml = template(data.elements);
+                
+                // Insert the compiled HTML into the page
+                document.getElementById('challengelist-container').innerHTML = compiledHtml;
+                drawCircleDiagram(data.elements);
+            } catch (error) {
+                console.error('There has been a problem with your fetch operation:', error);
+            }
+        }
+
+        function drawCircleDiagram(data){
+          const ctx = document.getElementById('circleDiagram').getContext('2d');
+          new Chart(ctx, {
+              type: 'pie',
+              data: {
+                  labels: data.map(item => item.name),
+                  datasets: [{
+                      data: data.map(item => item.weight),
+                      backgroundColor: data.map(item => item.color),
+                  }]
+              },
+              options: {
+                  responsive: true,
+                  plugins: {
+                      tooltip: {
+                          enabled: true
+                      },
+                      legend: {
+                        display: false
+                      }
+                  }
+              }
+          });
+        }
+
+        let currentHistoryParticipantId = 0, currentHistoryDays = 30;
+        // Display content when the page loads
+        document.addEventListener('DOMContentLoaded', fetchChallengeList);
+    </script>
