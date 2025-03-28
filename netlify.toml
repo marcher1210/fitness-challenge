@@ -1,9 +1,9 @@
 [build]
-  functions = "api/"
+  functions = "netlify/functions/"
 
 # Include all files in all functions
 [functions]
-  directory = "api/"
+  directory = "netlify/functions/"
   node_bundler = "esbuild"
   included_files = ["assets/**"]
 
