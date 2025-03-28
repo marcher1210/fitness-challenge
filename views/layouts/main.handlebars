@@ -97,6 +97,32 @@
 
             globalSettings = settings;
         }
+
+        function fetchPartial(partialName){
+            return fetch('/views/partials/' + partialName + '.handlebars')
+              .then(response => {
+                if (!response.ok) {
+                  throw new Error('Error loading template: ' + response.statusText);
+                }
+                return response.text();
+              });
+          }
+
+          function fetchContextData(apiUrl) {
+          return fetch(apiUrl)
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('Error fetching context data: ' + response.statusText);
+              }
+              return response.json();
+            });
+          }
+
+          function fetchAndRegisterPartial(partialName){
+            fetchPartial(partialName).then(templateSource => {
+              Handlebars.registerPartial(partialName, templateSource);
+            });
+          }
     </script>
 
   {{>navbar}}

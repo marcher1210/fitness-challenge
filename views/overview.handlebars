@@ -16,60 +16,33 @@
     <!----------------------------------
     |||      challengelist-container          |||
     ------------------------------------>
-    <script id="template-challengelist-container" type="text/x-handlebars-template">
-      <div class="row">
-          {{#each this}}
-            {{> challenge-description-card this}}
-          {{/each}}
-      </div>
-    </script>
-
-    <!-----------------------------------
-    |||   challenge-description-card  |||
-    ------------------------------------>
-    <script id="challenge-description-card" type="text/x-handlebars-template">
-        <div class="col-lg-3 col-md-6 col-sm-6 my-2">
-            <div class="card h-100">
-              <div class="card-header" style="background:{{color}};">
-                <h5 class="card-title">{{name}}</h3>
-              </div>
-                <img alt="{{name}}" src="{{imgUrl}}" class="card-img-top rounded-circle w-50 mx-auto mt-3"/>
-              <div class="card-body">
-                <h6>Frequency <small>({{chance}})</small></h6>
-                <p class="card-text">{{frequencytext}}</p>
-                <h6>Description</h6>
-                <p class="card-text">{{description}}</p>
-              </div>
-            </div>
-        </div>
-    </script>
 
     <script>
-      async function fetchChallengeList() {
+      function fetchChallengeList() {
         loadSettings();
-        Handlebars.registerPartial("challenge-description-card", document.getElementById('challenge-description-card').innerHTML);
+        fetchAndRegisterPartial("challenge-description-card");
 
-            try {
-                const response = await fetch('/api/lists/'+globalSettings.list);
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const data = await response.json();
+        // Load both the template and the context data concurrently using Promise.all
+        Promise.all([
+          fetchPartial('challenge-list'),
+          fetchContextData('/api/lists/'+globalSettings.list)
+        ])
+        .then(([templateSource, context]) => {
 
-                // Compile the Handlebars template
-                const templateSource = document.getElementById('template-challengelist-container').innerHTML;
-                const template = Handlebars.compile(templateSource);
-                
-                // Pass the data to the template
-                const compiledHtml = template(data.elements);
-                
-                // Insert the compiled HTML into the page
-                document.getElementById('challengelist-container').innerHTML = compiledHtml;
-                drawCircleDiagram(data.elements);
-            } catch (error) {
-                console.error('There has been a problem with your fetch operation:', error);
-            }
-        }
+          // Compile the template with Handlebars
+          const template = Handlebars.compile(templateSource);
+
+          // Generate the HTML by applying the context to the template
+          const html = template(context.elements);
+
+          // Insert the generated HTML into the DOM
+          document.getElementById('challengelist-container').innerHTML = html;
+          drawCircleDiagram(context.elements);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });      
+      }
 
         function drawCircleDiagram(data){
           const ctx = document.getElementById('circleDiagram').getContext('2d');
@@ -96,7 +69,6 @@
           });
         }
 
-        let currentHistoryParticipantId = 0, currentHistoryDays = 30;
         // Display content when the page loads
         document.addEventListener('DOMContentLoaded', fetchChallengeList);
     </script>
