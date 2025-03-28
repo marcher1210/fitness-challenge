@@ -9,10 +9,7 @@ const app = express();
 app.engine('handlebars', exphbs.engine({ defaultLayout: 'main' }));
 app.set('view engine', 'handlebars');
 // Note: Adjust the views path as needed. Here we're assuming views are one level up.
-app.set('views', path.join(__dirname, '../../views'));
-
-// Serve static assets from a public folder (optional)
-app.use(express.static(path.join(__dirname, '../../public')));
+app.set('views', path.join(process.cwd(), '/views'));
 
 // Define routes for your pages
 app.get('/', (req, res) => {
