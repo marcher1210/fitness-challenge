@@ -1,0 +1,24 @@
+<div class="row row-cols-7 text-center">
+  <!-- Calendar header -->
+  <div class="col h4">Mon</div>
+  <div class="col h4">Tue</div>
+  <div class="col h4">Wed</div>
+  <div class="col h4">Thu</div>
+  <div class="col h4">Fri</div>
+  <div class="col h4">Sat</div>
+  <div class="col h4">Sun</div>
+</div>
+<div class="row row-cols-7 calendar-row">
+  {{#each before}}
+    <div class="col calendar-day"></div>
+  {{/each}}
+  {{#each days}}
+    {{#unless date.weekdayNum}}
+      </div><div class="row row-cols-7 calendar-row">
+    {{/unless}}
+    {{> calendar-day this}}
+  {{/each}}
+  {{#each after}}
+    <div class="col calendar-day"></div>
+  {{/each}}
+</div>
