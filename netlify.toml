@@ -1,6 +1,11 @@
 [build]
   functions = "netlify/functions/"
 
+# Include all files in all functions
+[functions]
+  node_bundler = "esbuild"
+  included_files = ["assets/**", "views/**"]
+
 [[redirects]]
   from = "/api/lists/*"
   to = "/.netlify/functions/lists"
