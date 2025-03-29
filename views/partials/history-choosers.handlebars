@@ -1,0 +1,14 @@
+<nav aria-label="Participant">
+  <ul class="pagination pagination-sm justify-content-end">
+    {{#each participants}}
+      <li id="history-participant-button-{{@index}}" class="history-participant-button page-item"><a class="page-link" href="javascript:clickHistoryParticipant({{@index}});">{{this}}</a></li>
+    {{/each}}
+  </ul>
+</nav>
+  <nav aria-label="Number of days">
+    <ul class="pagination pagination-sm justify-content-end">
+      {{#each dayChoosers}}
+      <li id="history-days-button-{{this}}"  class="history-days-button page-item"><a class="page-link" href="javascript:clickHistoryDays({{this}});">{{this}}</a></li>
+    {{/each}}
+    </ul>
+  </nav>

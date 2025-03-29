@@ -1,13 +1,17 @@
 [build]
-  functions = "api/"
+  functions = "netlify/functions/"
 
 # Include all files in all functions
 [functions]
-  directory = "api/"
   node_bundler = "esbuild"
-  included_files = ["assets/**"]
+  included_files = ["assets/**", "views/**"]
 
 [[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/:splat"
+  from = "/api/lists/*"
+  to = "/.netlify/functions/lists"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/.netlify/functions/server"
   status = 200

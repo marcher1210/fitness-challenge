@@ -1,0 +1,113 @@
+<!--- History --->
+    <div id="history" class="section container-fluid bg-dark text-white py-5 min-vh-100">
+        <h1>History</h1>
+    <div  id="history" class="container bg-light text-dark border rounded-2 p-4">
+      <div class="container-fluid" id="history-choosers"></div>
+      <div class="container-fluid" id="history-calendar"></div>
+    </div>
+    </div>
+
+
+
+
+
+  <!-----------------------------------
+  |||      calendar-main           |||
+  ------------------------------------>
+    <script id="template-calendar-main" type="text/x-handlebars-template">
+     
+    </script>
+
+    <script type="text/javascript">
+    function renderHistory(){
+
+      fetchPartial('history-choosers')
+      .then((templateSource) => {
+
+        // Compile the template with Handlebars
+        const template = Handlebars.compile(templateSource);
+
+        // Generate the HTML by applying the context to the template
+        const html = template({participants: globalSettings.participants, dayChoosers: [30, 90, 180, 365]});
+
+        // Insert the generated HTML into the DOM
+        document.getElementById('history-choosers').innerHTML = html;
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    }
+
+
+      function fetchHistory(){
+        fetchAndRegisterPartial("calendar-day");
+
+        let participant = globalSettings.participants[currentHistoryParticipantId];
+      
+        const todate = new Date();
+        todate.setDate(todate.getDate()+(7-todate.getDay()));
+        const fromdate = new Date();
+        fromdate.setDate(fromdate.getDate() - currentHistoryDays);
+
+        const apiUrl = '/api/lists/'+globalSettings.list+'/history?userseed='+participant+'&fromdate='+fromdate.toISOString().split('T')[0]+'&todate='+todate.toISOString().split('T')[0];
+
+        // Load both the template and the context data concurrently using Promise.all
+        Promise.all([
+          fetchPartial('calendar-main'),
+          fetchContextData(apiUrl)
+        ])
+        .then(([templateSource, data]) => {
+
+          // Compile the template with Handlebars
+          const template = Handlebars.compile(templateSource);
+
+          // Calculate the data for the template
+          const numBefore = data[0].date.weekdayNum;
+          const numAfter = 6-data[data.length-1].date.weekdayNum;
+
+          // Generate the HTML by applying the context to the template
+          const html = template({before: [...Array(numBefore).keys()], days: data, after: [...Array(numAfter).keys()]});
+
+          // Insert the generated HTML into the DOM
+          document.getElementById('history-calendar').innerHTML = html;
+
+          //Activate "participant" button
+          let participantButtons = document.getElementsByClassName('history-participant-button');
+          for (var i = 0; i < participantButtons.length; i++) {
+            participantButtons[i].classList.remove("active");
+          }
+          document.getElementById('history-participant-button-'+currentHistoryParticipantId).classList.add("active");
+
+                  //Activate "days" button
+          let daysButtons = document.getElementsByClassName('history-days-button');
+          for (var i = 0; i < daysButtons.length; i++) {
+            daysButtons[i].classList.remove("active");
+          }
+          document.getElementById('history-days-button-'+currentHistoryDays).classList.add("active");
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });  
+
+    }
+
+    function clickHistoryParticipant(participantId){
+      currentHistoryParticipantId = participantId;
+      fetchHistory();
+    }
+
+    function clickHistoryDays(days){
+      currentHistoryDays = days;
+      fetchHistory();
+    }
+
+
+      let currentHistoryParticipantId = 0, currentHistoryDays = 30;
+    function loadMain(){ 
+      loadSettings();
+      renderHistory();
+      fetchHistory();
+    }
+        // Display content when the page loads
+        document.addEventListener('DOMContentLoaded', loadMain);
+  </script>
