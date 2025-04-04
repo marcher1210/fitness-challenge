@@ -22,7 +22,7 @@
     <script>
 
     async function renderParticipant(){
-      fetchAndRegisterPartial("daycard");
+      await fetchAndRegisterPartial("daycard");
 
       await fetchPartial('participant-card')
       .then((templateSource) => {

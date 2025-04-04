@@ -118,8 +118,8 @@
             });
           }
 
-          function fetchAndRegisterPartial(partialName){
-            fetchPartial(partialName).then(templateSource => {
+          async function fetchAndRegisterPartial(partialName){
+            await fetchPartial(partialName).then(templateSource => {
               Handlebars.registerPartial(partialName, templateSource);
             });
           }
