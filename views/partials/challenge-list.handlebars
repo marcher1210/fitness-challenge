@@ -1,5 +1,9 @@
 <div class="row">
-    {{#each this}}
-      {{> challenge-description-card this}}
+  <nav aria-label="Choose a challenge">
+    <ul class="pagination pagination-sm justify-content-end">
+      {{#each this}}
+      <li id="challengelist-button-{{this.id}}"  class="challengelist-button page-item"><a class="page-link" href="javascript:fetchChallenge('{{this.id}}');">{{this.title}}</a></li>
     {{/each}}
+    </ul>
+  </nav>
 </div>

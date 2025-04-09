@@ -3,7 +3,20 @@ const config = {
     apiUrl: '/api/lists/',
     futureHours: 12, //How many hours before a future date can you get an element
     futureElement: { name: "Coming", imgUrl: "/assets/unknown.webp"},
-    lists: ['challenges', 'run', 'strength']
+    lists: [
+    	{
+    		id: 'challenges', 
+    		title: "All challenges"
+    	},
+    	{
+    		id: 'run', 
+    		title: "Run Challenges"
+    	},
+    	{
+    		id: 'strength',
+    		title: "Strength challenges"
+    	}
+    ]
 };
 
 
@@ -12,7 +25,7 @@ const config = {
  * * * * * * * * * * * * * */
 function getAllLists(){
 
-	return config.lists.map(list => {return {title: list, url: config.apiUrl+list+'/'};});
+	return config.lists.map(obj => ({ ...obj, url: config.apiUrl+obj.id+'/'}));
 }
 
 
@@ -21,9 +34,11 @@ function getAllLists(){
  * * * * * * * * * * * * * */
 function getList(listtitle) {
 	const List  = require('./weighted-list-picker');
-    const list = new List(config.seed, "./assets/lists/"+listtitle+".csv");
+    const listpicker = new List(config.seed, "./assets/lists/"+listtitle+".csv");
+
+    const list = getAllLists().find(obj => obj.id == listtitle);
     
-	return {title: listtitle, url: config.apiUrl+listtitle+'/', elements: list.getFullList()};
+	return {...list, elements: listpicker.getFullList()};
 }
 
 /* * * * * * * * * * * * * * 
@@ -137,7 +152,7 @@ exports.handler = async (event) => {
     }
     else {
 	    const listtitle = pathparts[1];
-	    if(!config.lists.includes(listtitle)) {
+	    if(!config.lists.map(obj => obj.id).includes(listtitle)) {
 
 		    return {
 		        statusCode: 404,

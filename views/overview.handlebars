@@ -1,13 +1,17 @@
 
+
     <!--- Challenges --->
-    <div id="challengelist" class="section container-fluid bg-secondary pt-5 min-vh-100">
+    <div id="challengeinformation" class="section container-fluid bg-secondary min-vh-100">
         <h1>Overview of challenges</h1>
         <div class="container mt-5 bg-light border rounded-2 p-4">
+          <div class="row">
+            <div id="challengelist-container" class="col"></div>
+          </div>
           <div class="row">
             <div class="col-lg-3 col-md-12">
               <canvas id="circleDiagram"></canvas>
             </div>
-            <div id="challengelist-container" class="col"></div>
+            <div id="challengeinformation-container" class="col"></div>
           </div>
         </div>
     </div>
@@ -18,14 +22,18 @@
     ------------------------------------>
 
     <script>
-      function fetchChallengeList() {
+      function onLoadReady() {
         loadSettings();
-        fetchAndRegisterPartial("challenge-description-card");
+        fetchAllChallenges();
+      }
 
+      
+
+      function fetchAllChallenges() {
         // Load both the template and the context data concurrently using Promise.all
         Promise.all([
           fetchPartial('challenge-list'),
-          fetchContextData('/api/lists/'+globalSettings.list)
+          fetchContextData('/api/lists/')
         ])
         .then(([templateSource, context]) => {
 
@@ -33,10 +41,36 @@
           const template = Handlebars.compile(templateSource);
 
           // Generate the HTML by applying the context to the template
-          const html = template(context.elements);
+          const html = template(context);
 
           // Insert the generated HTML into the DOM
           document.getElementById('challengelist-container').innerHTML = html;
+
+          fetchChallenge(context[0].id);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });      
+      }
+
+      function fetchChallenge(listname) {
+        fetchAndRegisterPartial("challenge-description-card");
+
+        // Load both the template and the context data concurrently using Promise.all
+        Promise.all([
+          fetchPartial('challenge-description'),
+          fetchContextData('/api/lists/'+listname)
+        ])
+        .then(([templateSource, context]) => {
+
+          // Compile the template with Handlebars
+          const template = Handlebars.compile(templateSource);
+
+          // Generate the HTML by applying the context to the template
+          const html = template(context);
+
+          // Insert the generated HTML into the DOM
+          document.getElementById('challengeinformation-container').innerHTML = html;
           drawCircleDiagram(context.elements);
         })
         .catch(error => {
@@ -46,6 +80,8 @@
 
         function drawCircleDiagram(data){
           const ctx = document.getElementById('circleDiagram').getContext('2d');
+          Chart.getChart("circleDiagram")?.destroy();
+
           new Chart(ctx, {
               type: 'pie',
               data: {
@@ -70,5 +106,5 @@
         }
 
         // Display content when the page loads
-        document.addEventListener('DOMContentLoaded', fetchChallengeList);
+        document.addEventListener('DOMContentLoaded', onLoadReady);
     </script>
