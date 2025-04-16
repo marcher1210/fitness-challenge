@@ -1,29 +1,34 @@
-<!--- Settings --->
-  <div id="settings" class="section container-fluid bg-dark bg-gradient text-white pt-5 min-vh-100">
-        <h3 class="text-center">Settings</h3>
-        <form id="settingsForm" class="container text-center mt-5" >
-            <div class="form-group">
-                <label>Participants</label>
-                <div id="participantsContainer">
-                    <div class="array-item">
-                        <input type="text" class="form-control participant-input" placeholder="Enter participant name">
-                        <button type="button" class="btn btn-danger btn-sm remove-participant-item">-</button>
-                    </div>
-                </div>
+<div class="row">
+  <div class="col"><h1>Settings</h1></div>
+</div>
+<div class="row">
+    <form id="settingsForm" class="container mt-5" >
+        <fieldset class="row mb-5">
+            <legend class="col-form-label col-sm-2 pt-0">Participants</legend>
+            <div class="col-sm-10">
+                <div id="participantsContainer"></div>
                 <button type="button" class="btn btn-secondary btn-sm mt-2" id="addParticipantItem">Add Participant</button>
             </div>
-            <div class="form-group">
-                <label for="list">List</label>
+        </fieldset>
+        <div class="row mb-5">
+            <label for="list" class="col-sm-2 col-form-label">Challenge list</label>
+            <div class="col-sm-10">
                 <select id="list" class="form-select">
                     <option value="challenges">Challenges</option>
                     <option value="run">Run</option>
                     <option value="strength">Strength</option>
                 </select>
             </div>
-            <button type="button" class="btn btn-primary" id="saveSettings">Save</button>
-            <button type="button" class="btn btn-secondary" id="resetSettings">Reset</button>
-        </form>
-    </div>
+        </div>
+        <div class="row mb-5">
+            <div for="list" class="col-sm-2"></div>
+            <div class="col-sm-10">
+                <button type="button" class="btn btn-primary btn-lg" id="saveSettings">Save</button>
+                <button type="button" class="btn btn-secondary btn-lg" id="resetSettings">Reset</button>
+            </div>
+        </div>
+    </form>
+</div>
   <!----------------------------------
   |||      Settings functionality   |||
   ------------------------------------>
@@ -60,10 +65,10 @@
         function addParticipantItem(value = '') {
             const participantsContainer = document.getElementById('participantsContainer');
             const div = document.createElement('div');
-            div.className = 'array-item';
+            div.className = 'input-group mb-2';
             div.innerHTML = `
                 <input type="text" class="form-control participant-input" value="${value}" placeholder="Enter participant name">
-                <button type="button" class="btn btn-danger btn-sm remove-participant-item">-</button>
+                <button type="button" class="input-group-text btn btn-danger btn-sm remove-participant-item">Remove</button>
             `;
             div.querySelector('.remove-participant-item').addEventListener('click', () => div.remove());
             participantsContainer.appendChild(div);
