@@ -68,7 +68,7 @@
             div.className = 'input-group mb-2';
             div.innerHTML = `
                 <input type="text" class="form-control participant-input" value="${value}" placeholder="Enter participant name">
-                <button type="button" class="input-group-text btn btn-danger btn-sm remove-participant-item">Remove</button>
+                <button type="button" class="input-group-text btn btn-danger btn-sm remove-participant-item"><i class="bi bi-trash-fill"></i></button>
             `;
             div.querySelector('.remove-participant-item').addEventListener('click', () => div.remove());
             participantsContainer.appendChild(div);
