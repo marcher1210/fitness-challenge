@@ -1,9 +1,24 @@
-<div class="row">
-  <nav aria-label="Choose a challenge">
-    <ul class="pagination pagination-sm justify-content-end">
-      {{#each this}}
-      <li id="challengelist-button-{{this.id}}"  class="challengelist-button page-item"><a class="page-link" href="javascript:fetchChallenge('{{this.id}}');">{{this.title}}</a></li>
-    {{/each}}
-    </ul>
-  </nav>
+<div class="accordion" id="challengeAccordion">
+  {{#each this}}
+  <div class="accordion-item">
+    <h2 class="accordion-header">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{this.id}}" aria-expanded="false" aria-controls="collapse-{{this.id}}" onclick="javascript:fetchChallenge('{{this.id}}');">
+        <div class="row d-block">
+          <h4>{{this.title}}</h4>
+          <p class="my-0">{{this.description}}</p>
+        </div>
+      </button>
+    </h2>
+    <div id="collapse-{{this.id}}" class="accordion-collapse collapse" data-bs-parent="#challengeAccordion">
+      <div class="accordion-body">
+        <div class="row">
+            <div class="col-lg-3 col-md-12">
+              <canvas id="circleDiagram-{{this.id}}"></canvas>
+            </div>
+            <div id="challengeinformation-{{this.id}}" class="col"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {{/each}}
 </div>

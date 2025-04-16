@@ -1,110 +1,95 @@
+<div class="row">
+  <div class="col"><h1>Overview of challenges</h1></div>
+</div>
+<div class="row">
+  <div id="challengelist" class="col"></div>
+</div>
 
 
-    <!--- Challenges --->
-    <div id="challengeinformation" class="section container-fluid bg-secondary min-vh-100">
-        <h1>Overview of challenges</h1>
-        <div class="container mt-5 bg-light border rounded-2 p-4">
-          <div class="row">
-            <div id="challengelist-container" class="col"></div>
-          </div>
-          <div class="row">
-            <div class="col-lg-3 col-md-12">
-              <canvas id="circleDiagram"></canvas>
-            </div>
-            <div id="challengeinformation-container" class="col"></div>
-          </div>
-        </div>
-    </div>
+<script>
+  function onLoadReady() {
+    loadSettings();
+    fetchAllChallenges();
+  }
 
+  
 
-    <!----------------------------------
-    |||      challengelist-container          |||
-    ------------------------------------>
+  function fetchAllChallenges() {
+    // Load both the template and the context data concurrently using Promise.all
+    Promise.all([
+      fetchPartial('challenge-list'),
+      fetchContextData('/api/lists/')
+    ])
+    .then(([templateSource, context]) => {
 
-    <script>
-      function onLoadReady() {
-        loadSettings();
-        fetchAllChallenges();
-      }
+      // Compile the template with Handlebars
+      const template = Handlebars.compile(templateSource);
 
-      
+      // Generate the HTML by applying the context to the template
+      const html = template(context);
 
-      function fetchAllChallenges() {
-        // Load both the template and the context data concurrently using Promise.all
-        Promise.all([
-          fetchPartial('challenge-list'),
-          fetchContextData('/api/lists/')
-        ])
-        .then(([templateSource, context]) => {
+      // Insert the generated HTML into the DOM
+      document.getElementById('challengelist').innerHTML = html;
 
-          // Compile the template with Handlebars
-          const template = Handlebars.compile(templateSource);
+      fetchChallenge(context[0].id);
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });      
+  }
 
-          // Generate the HTML by applying the context to the template
-          const html = template(context);
+  function fetchChallenge(listname) {
+    fetchAndRegisterPartial("challenge-description-card");
 
-          // Insert the generated HTML into the DOM
-          document.getElementById('challengelist-container').innerHTML = html;
+    // Load both the template and the context data concurrently using Promise.all
+    Promise.all([
+      fetchPartial('challenge-description'),
+      fetchContextData('/api/lists/'+listname)
+    ])
+    .then(([templateSource, context]) => {
 
-          fetchChallenge(context[0].id);
-        })
-        .catch(error => {
-          console.error('Error:', error);
-        });      
-      }
+      // Compile the template with Handlebars
+      const template = Handlebars.compile(templateSource);
 
-      function fetchChallenge(listname) {
-        fetchAndRegisterPartial("challenge-description-card");
+      // Generate the HTML by applying the context to the template
+      const html = template(context);
 
-        // Load both the template and the context data concurrently using Promise.all
-        Promise.all([
-          fetchPartial('challenge-description'),
-          fetchContextData('/api/lists/'+listname)
-        ])
-        .then(([templateSource, context]) => {
+      // Insert the generated HTML into the DOM
+      document.getElementById('challengeinformation-'+listname).innerHTML = html;
+      drawCircleDiagram(listname, context.elements);
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });      
+  }
 
-          // Compile the template with Handlebars
-          const template = Handlebars.compile(templateSource);
+    function drawCircleDiagram(listname, data){
+      const ctx = document.getElementById("circleDiagram-"+listname).getContext('2d');
+      Chart.getChart("circleDiagram-"+listname)?.destroy();
 
-          // Generate the HTML by applying the context to the template
-          const html = template(context);
-
-          // Insert the generated HTML into the DOM
-          document.getElementById('challengeinformation-container').innerHTML = html;
-          drawCircleDiagram(context.elements);
-        })
-        .catch(error => {
-          console.error('Error:', error);
-        });      
-      }
-
-        function drawCircleDiagram(data){
-          const ctx = document.getElementById('circleDiagram').getContext('2d');
-          Chart.getChart("circleDiagram")?.destroy();
-
-          new Chart(ctx, {
-              type: 'pie',
-              data: {
-                  labels: data.map(item => item.name),
-                  datasets: [{
-                      data: data.map(item => item.weight),
-                      backgroundColor: data.map(item => item.color),
-                  }]
-              },
-              options: {
-                  responsive: true,
-                  plugins: {
-                      tooltip: {
-                          enabled: true
-                      },
-                      legend: {
-                        display: false
-                      }
+      new Chart(ctx, {
+          type: 'pie',
+          data: {
+              labels: data.map(item => item.name),
+              datasets: [{
+                  data: data.map(item => item.weight),
+                  backgroundColor: data.map(item => item.color),
+              }]
+          },
+          options: {
+              responsive: true,
+              plugins: {
+                  tooltip: {
+                      enabled: true
+                  },
+                  legend: {
+                    display: false
                   }
               }
-          });
-        }
+          }
+      });
+    }
 
-        // Display content when the page loads
-        document.addEventListener('DOMContentLoaded', onLoadReady);
-    </script>
+    // Display content when the page loads
+    document.addEventListener('DOMContentLoaded', onLoadReady);
+</script>

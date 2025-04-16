@@ -6,15 +6,18 @@ const config = {
     lists: [
     	{
     		id: 'challenges', 
-    		title: "All challenges"
+    		title: "All challenges",
+    		description: "A mix of both running and strength challenges."
     	},
     	{
     		id: 'run', 
-    		title: "Run Challenges"
+    		title: "Run Challenges",
+    		description: "Only running challenges with a mix of duration and intensity."
     	},
     	{
     		id: 'strength',
-    		title: "Strength challenges"
+    		title: "Strength challenges",
+    		description: "Only strength challenges with some fun additions."
     	}
     ]
 };
