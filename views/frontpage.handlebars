@@ -1,4 +1,4 @@
-<div class="row g-4 row-cols-1 row-cols-lg-3 row-cols-md-2 justify-content-center" id="card-row">
+<div class="row justify-content-center" id="card-row">
       
 
 </div>
@@ -13,17 +13,15 @@
     async function renderParticipant(){
       await fetchAndRegisterPartial("daycard");
 
-      await fetchPartial('participant-card')
+      await fetchPartial('participant-cards')
       .then((templateSource) => {
 
         // Compile the template with Handlebars
         const template = Handlebars.compile(templateSource);
 
         // Generate the HTML by applying the context to the template
-        var html = '';
-        for (var i = 0; i < globalSettings.participants.length; i++) {
-          html += template({number:i+1, name:globalSettings.participants[i]});
-        }
+        var html = template({participants:globalSettings.participants});
+        
 
         // Insert the generated HTML into the DOM
         document.getElementById('card-row').innerHTML = html;
@@ -40,8 +38,8 @@
       tomorrow.setDate(tomorrow.getDate() + 1);
 
       for (var i = 0; i < globalSettings.participants.length; i++) {
-        fetchCard(i+1, globalSettings.participants[i], 'today', today);
-        fetchCard(i+1, globalSettings.participants[i], 'tomorrow', tomorrow);
+        fetchCard(i, globalSettings.participants[i], 'today', today);
+        fetchCard(i, globalSettings.participants[i], 'tomorrow', tomorrow);
       }
     }
 
@@ -49,11 +47,13 @@
       const apiUrl = '/api/lists/'+globalSettings.list+'/element?userseed='+participant+'&date='+date.toISOString().split('T')[0];
       fetchContextData(apiUrl)
       .then(data => {
-        const container = document.getElementById('participant-'+id).getElementsByClassName(dayname+'-card')[0];
+        const container = document.getElementById('participant-'+id+'-'+dayname);
                 
-        container.getElementsByClassName('card-text')[0].innerHTML = data.element.name;
+        container.getElementsByClassName('card-title')[0].innerHTML = data.element.name;
+        container.getElementsByClassName('card-description')[0].innerHTML = data.element.description;
+        container.getElementsByClassName('card-date')[0].innerHTML = data.date.mediumString;
         //container.getElementsByClassName('card-footer')[0].innerHTML = data.date.mediumString;
-        container.getElementsByClassName('card-img-top')[0].src = data.element.imgUrl;
+        container.getElementsByClassName('card-img')[0].src = data.element.imgUrl;
       });
     }
 

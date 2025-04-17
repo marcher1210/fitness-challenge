@@ -1,9 +1,16 @@
-<div class="card {{class}}-card text-center">
-  <img src="/assets/unknown.webp" class="card-img-top" alt="Unknown">
-  <div class="card-body">
-    <p class="card-text"></p>
-  </div>
-  <div class="card-footer text-body-secondary">
-    {{dayname}}
+
+<div class="card mb-3" id="participant-{{number}}-{{day}}">
+  <div class="row g-0">
+    <div class="col-4">
+      <img src="/assets/unknown.webp" class="card-img img-fluid rounded-start" alt="Unknown">
+    </div>
+    <div class="col-8">
+      <div class="card-body">
+        <div class="float-end"><h4><span class="badge text-bg-light">{{participant}}</span></h4></div>
+        <h5 class="card-title">Coming</h5>
+        <p class="card-text card-description">This challenge is not available yet. Check back soon!</p>
+        <p class="card-text"><small class="text-body-secondary card-date"></small></p>
+      </div>
+    </div>
   </div>
 </div>
